@@ -165,7 +165,14 @@ local function loadImage(birdName, imageNumber)
 		end
 	end
 	
-	display.loadRemoteImage(url, localFilename, system.CachesDirectory, onImageComplete)
+	local params = {
+		url = url,
+		filename = localFilename,
+		baseDir = system.CachesDirectory,
+		onComplete = onImageComplete
+	}
+	
+	display.loadRemoteImage(params)
 end
 
 -- Update display
