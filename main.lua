@@ -166,7 +166,7 @@ local function loadImage(birdName, imageNumber)
 	end
 	
 	local params = {
-		url = url,
+		remoteSource = url,
 		filename = localFilename,
 		baseDir = system.CachesDirectory,
 		onComplete = onImageComplete
