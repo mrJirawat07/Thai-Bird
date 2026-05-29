@@ -134,43 +134,38 @@ local function loadImage(birdName, imageNumber)
 	local localFilename = string.gsub(birdName, " ", "_") .. "_" .. imageNumber .. ".jpg"
 	
 	-- Load image with callback
-	local params = {
-		remoteSource = url,
-		filename = localFilename,
-		baseDir = system.CachesDirectory,
-		onComplete = function(event)
-			if event.isError then
-				statusText.text = "Error loading image"
-				gallery.isLoading = false
-			else
-				-- Create image display object from the downloaded file
-				local localPath = system.pathForFile(localFilename, system.CachesDirectory)
-				gallery.currentImage = display.newImage(imageGroup, localPath)
-				gallery.currentImage.x = SCREEN_WIDTH/2
-				gallery.currentImage.y = SCREEN_HEIGHT/2 - 20
-				
-				-- Scale image to fit container
-				local maxWidth = SCREEN_WIDTH - 40
-				local maxHeight = SCREEN_HEIGHT * 0.65
-				
-				if gallery.currentImage.width > maxWidth or gallery.currentImage.height > maxHeight then
-					local scaleX = maxWidth / gallery.currentImage.width
-					local scaleY = maxHeight / gallery.currentImage.height
-					local scale = math.min(scaleX, scaleY)
-					gallery.currentImage.xScale = scale
-					gallery.currentImage.yScale = scale
-				end
-				
-				-- Animate in
-				transition.to(gallery.currentImage, {alpha = 1, time = 300})
-				
-				statusText.text = "Ready"
-				gallery.isLoading = false
+	local function onImageComplete(event)
+		if event.isError then
+			statusText.text = "Error loading image"
+			gallery.isLoading = false
+		else
+			-- Create image display object from the downloaded file
+			local localPath = system.pathForFile(localFilename, system.CachesDirectory)
+			gallery.currentImage = display.newImage(imageGroup, localPath)
+			gallery.currentImage.x = SCREEN_WIDTH/2
+			gallery.currentImage.y = SCREEN_HEIGHT/2 - 20
+			
+			-- Scale image to fit container
+			local maxWidth = SCREEN_WIDTH - 40
+			local maxHeight = SCREEN_HEIGHT * 0.65
+			
+			if gallery.currentImage.width > maxWidth or gallery.currentImage.height > maxHeight then
+				local scaleX = maxWidth / gallery.currentImage.width
+				local scaleY = maxHeight / gallery.currentImage.height
+				local scale = math.min(scaleX, scaleY)
+				gallery.currentImage.xScale = scale
+				gallery.currentImage.yScale = scale
 			end
+			
+			-- Animate in
+			transition.to(gallery.currentImage, {alpha = 1, time = 300})
+			
+			statusText.text = "Ready"
+			gallery.isLoading = false
 		end
-	}
+	end
 	
-	display.loadRemoteImage(params)
+	display.loadRemoteImage(url, localFilename, system.CachesDirectory, onImageComplete)
 end
 
 -- Update display
