@@ -130,17 +130,22 @@ local function loadImage(birdName, imageNumber)
 	-- Construct URL
 	local url = GITHUB_BASE_URL .. string.gsub(birdName, " ", "%%20") .. "/" .. imageNumber .. ".jpg"
 	
+	-- Create local filename
+	local localFilename = string.gsub(birdName, " ", "_") .. "_" .. imageNumber .. ".jpg"
+	
 	-- Load image with callback
 	local params = {
-		filename = url,
+		remoteSource = url,
+		filename = localFilename,
 		baseDir = system.CachesDirectory,
 		onComplete = function(event)
 			if event.isError then
 				statusText.text = "Error loading image"
 				gallery.isLoading = false
 			else
-				-- Create image display object
-				gallery.currentImage = display.newImage(imageGroup, event.filename)
+				-- Create image display object from the downloaded file
+				local localPath = system.pathForFile(localFilename, system.CachesDirectory)
+				gallery.currentImage = display.newImage(imageGroup, localPath)
 				gallery.currentImage.x = SCREEN_WIDTH/2
 				gallery.currentImage.y = SCREEN_HEIGHT/2 - 20
 				
